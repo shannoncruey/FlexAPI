@@ -3,7 +3,8 @@ FlexAPI
 
 FlexAPI is a simple framework that allows you to quickly and easily create a REST API on a relational database.
 
-*DESCRIPTION*
+DESCRIPTION
+-----------
 There are thousands of enterprise, custom, proprietary and legacy application out in the world today.  Many of these
 applications are performing their purposes quite well, and will not be retired any time soon.  However, as 
 the world marches forward, Application administrators are increasingly being tasked with creating new and
@@ -21,11 +22,13 @@ of user experience.
 FlexAPI is currently a very young project, but we hope it will rapidly evolve into the beta phase.
 
 
-*DEPENDENCIES:*
+DEPENDENCIES:
+------------
 * The [web.py](http://webpy.org/) framework.
 * [PyMySql](https://github.com/petehunt/PyMySQL/) for MySql access.
 
-*TODO:*
+TODO:
+----
 These are items on the short list:
 * A Tutorial
 * Request Authentication
