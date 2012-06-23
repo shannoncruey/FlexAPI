@@ -1,0 +1,12 @@
+{
+    "name":"format_example",
+    "type":"sql",
+    "method":"select",
+    "datasource":"local_mysql",
+    "record_format":"dict",
+    "return":"format",
+    "prefix":"<table border='1'>",
+    "suffix":"</table>",
+    "row_template":"<tr><td>{0}</td><td>{1}</td></tr>",
+    "code":"SELECT 'hello', 'world'"
+}

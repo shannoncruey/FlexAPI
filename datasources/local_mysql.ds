@@ -1,0 +1,8 @@
+{
+    "provider":"mysql",
+    "server":"localhost",
+    "port":"3306",
+    "uid":"YOURUSERID",
+    "pwd":"YOURPASSWORD",
+    "database":"YOURDATABASE"
+}

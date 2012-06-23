@@ -1,0 +1,9 @@
+{
+    "name":"json_example",
+    "type":"sql",
+    "method":"select",
+    "datasource":"local_mysql",
+    "record_format":"dict",
+    "return":"json",
+    "code":"SELECT 'hello' as col1, 'world' as col2"
+}
