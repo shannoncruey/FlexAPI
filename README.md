@@ -11,13 +11,14 @@ the world marches forward, Application administrators are increasingly being tas
 'modern' ways to interface with these legacy applications.
 
 Enter FlexAPI!  Our goal is simple - to provide a robust,
-stable and easy to configure REST API that can be easily hooked into existing application.
+stable and easy to configure REST API that can be easily hooked into an existing application.
 
-API "endpoints" are defined in simple JSON files.  Endpoints can access different "datasources", also defined in JSON files.
+API "endpoints" are defined in simple configuration files.  Endpoints can access different "datasources", also defined in configuration files.
 
-FlexAPI could very easily evolve into a content delivery system.  This is not the goal.  However, any web
-developer could easily use FlexAPI along with "Web 2.0" tools such as jQuery to quickly create any type 
-of user experience.
+FlexAPI could very easily evolve into a content delivery system, but this is *not the goal*.  However, since FlexAPI is built
+on the Web.py framework, any web
+developer could easily use FlexAPI along with tools such as jQuery to quickly create any type 
+of end user experience.
 
 FlexAPI is currently a very young project, but we hope it will rapidly evolve into the beta phase.
 
