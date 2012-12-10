@@ -50,91 +50,21 @@ class endpoint:
             print "Processing endpoint [%s]" % ep["name"]
             
             data = ""
+            options = ep["options"] if ep.has_key("options") else {}
+            
             if ep["type"] == "sql":
                 data = process_sql(ep)
+            else:
+                return "Invalid Endpoint Type."
             
             if ep.has_key("return"):
                 if ep["return"] == "json":
-                    # print str(data)
-                    js = json.dumps(data, cls=BetterEncoder, sort_keys=True, indent=4)
-                    if ep.has_key("prefix"):
-                        js = ep["prefix"] + js
-                    if ep.has_key("suffix"):
-                        js += ep["suffix"]
-    
-                    return js
+                    return return_json(data, ep)
                 elif ep["return"] == "format":
                     """Use row_template and perform python 'format'. on each row."""
-                    try:
-                        iterator = iter(data)
-                    except TypeError:
-                        # data is not iterable, just return it
-                        return str(data)
-                    else:
-                        # data is a rowset
-                        txt = ""
-                        for row in data:
-                            # the elements in the row may be a dict, or a tuple
-                            # only a dict will have 'itervalues'
-                            try:
-                                fields = row.itervalues()
-                            except AttributeError:
-                                fields = iter(row)
-    
-                            # turn the fields into a list so we can use them as format arguments
-                            outlist = []
-                            fieldlist = []
-                            for field in fields:
-                                fieldlist.append(field)
-    
-                            print tuple(fieldlist)                            
-                            if ep.has_key("row_template"):
-                                if ep["row_template"]:
-                                    print ep["row_template"]
-                                    outlist.append(ep["row_template"].format(*fieldlist))
-                                else:
-                                    print "Format return type requires a 'row_template'."
-                            else:
-                                print "Format return type requires a 'row_template'."
-                           
-                            txt += "".join(outlist)
-    
-                        if ep.has_key("prefix"):
-                            txt = ep["prefix"] + txt
-                        if ep.has_key("suffix"):
-                            txt += ep["suffix"]
-                        
-                        return txt
+                    return return_format(data, ep, options)
                 elif ep["return"] == "text":
-                    """Kinda strange, but just concatenate the whole dataset into text. No formatting."""
-                    try:
-                        iterator = iter(data)
-                    except TypeError:
-                        # data is not iterable, just return it
-                        return str(data)
-                    else:
-                        # data is a rowset
-                        txt = ""
-                        for row in data:
-                            # the elements in the row may be a dict, or a tuple
-                            # only a dict will have 'itervalues'
-                            try:
-                                fields = row.itervalues()
-                            except AttributeError:
-                                fields = iter(row)
-    
-                            outlist = []
-                            for field in fields:
-                                outlist.append(field)
-                                
-                            txt += "".join(outlist)
-    
-                        if ep.has_key("prefix"):
-                            txt = ep["prefix"] + txt
-                        if ep.has_key("suffix"):
-                            txt += ep["suffix"]
-                        
-                        return txt
+                    return return_text(data)
                                 
                 elif ep["return"] == "csv":
                     """This can make use of the csv module, if I can 
@@ -170,6 +100,126 @@ class endpoint:
             raise ex
             return ex.__str__()
             
+def return_json(data, ep):
+    # print str(data)
+    js = json.dumps(data, cls=BetterEncoder, sort_keys=True, indent=4)
+    if ep.has_key("prefix"):
+        js = ep["prefix"] + js
+    if ep.has_key("suffix"):
+        js += ep["suffix"]
+    
+    return js
+
+def return_text(data, ep):
+    try:
+        _ = iter(data)
+    except TypeError:
+        # data is not iterable, just return it
+        return str(data)
+    else:
+        # data is a rowset
+        output = ""
+        for row in data:
+            # the elements in the row may be a dict, or a tuple
+            # only a dict will have 'itervalues'
+            try:
+                fields = row.itervalues()
+            except AttributeError:
+                fields = iter(row)
+
+            outlist = []
+            for field in fields:
+                outlist.append(str(field))
+                
+            output += "".join(outlist)
+            
+        return output
+
+def return_format(data, ep, options):
+    """Use row_template and perform python 'format' on each row."""
+    try:
+        _ = iter(data)
+    except TypeError:
+        # data is not iterable, just return it
+        return str(data)
+    else:
+        # data is a rowset
+        outlist = []
+        output = ""
+        rownum = 0
+        for row in data:
+            if ep.has_key("row_template"):
+                if ep["row_template"]:
+                    rowstr = "".join(ep["row_template"])
+
+                    # there are two format_types... index and replace...
+                    # 'index' uses the python .format function, and looks for {0} notation
+                    # 'replace' type uses the pythonish %s and %d tokens.
+                    
+                    # index is the default
+                    fmt_type = "index"
+                    if options.has_key("format_type"):
+                        if options["format_type"] == "replace":
+                            fmt_type = "replace"
+                    
+                    if fmt_type == "replace":
+                        try:
+                            # the token %# is a special replacement token, in the %s format style :-)
+                            rowstr = rowstr.replace("{#}", str(rownum))
+                            
+                            # convert the row to a tuple
+                            fieldlist = tuple(row)
+                            outlist.append(rowstr % fieldlist)
+                        except TypeError:
+                            raise Exception("Format type 'replace' row_template must use every item in the result row.")
+                        except Exception as ex:
+                            raise Exception("Format type 'replace' row_template uses the %%s placeholder syntax.  Any literal percent signs should be doubled. The token %# is used for printing the row number. %s" % ex)
+                    else:
+                        # the token {#} is a special replacement token, in the {0} format style :-)
+                        rowstr = rowstr.replace("{#}", str(rownum))
+
+                        # the elements in the row may be a dict, list or tuple
+                        # only a dict will have 'itervalues'
+                        try:
+                            _ = row.itervalues()
+                            try:
+                                # if it's a dict, we can replace using {key} syntax
+                                print row
+                                outlist.append(rowstr.format(**row))
+                            except IndexError:
+                                raise Exception("Results are a dictionary, the {key} syntax must be used in the row_template.")
+                            except KeyError:
+                                raise Exception("One or more keys do not exist on the result row.")
+                        except AttributeError:
+                            _ = iter(row)
+                            try:
+                                # if it's a list, we can replace using {0} syntax
+                                outlist.append(rowstr.format(*row))
+                            except IndexError:
+                                raise Exception("The row_template is asking for more values than exist in the result row.")
+                            except KeyError:
+                                raise Exception("Results are a list, the {0} syntax must be used in the row_template.")
+                            
+#                            except Exception as ex:
+#                                raise Exception("Format type 'index' row_template uses the {0} or {key} placeholder syntax." \
+#                                                  "  Any literal curly braces should be doubled." \
+#                                                  " The token {#} is used for printing the row number. %s" % ex)
+                else:
+                    raise Exception("Format return type requires a 'row_template'.  Value cannot be empty.")
+            else:
+                raise Exception("Format return type requires a 'row_template'.  Value cannot be empty.")
+                
+            rownum += 1
+
+        # might have a row separator which will go between each row
+        joinwith = ""
+        if options.has_key("row_separator"):
+            joinwith = options["row_separator"]
+        
+        output += joinwith.join(outlist)
+        
+    return output
+
 def returnerror(msg):
     return "{\"error\":\"%s\"}" % msg
             
@@ -198,41 +248,45 @@ def mysql_exec(ds, ep):
         sql = ep["code"] # would do variable replacement first
         
         print "Executing on [%s\%s]\n%s" % (ds["server"], ds["database"], ep["code"])
-
-        conn = pymysql.connect(host=server, port=int(port), 
+        conn = None
+        conn = pymysql.connect(host=server, port=int(port),
             user=uid, passwd=pwd, db=database)
-        conn.autocommit(1)
+
+        if conn:
+            conn.autocommit(1)
         
-        # a select or an exec?
-        method = "select"
-        if ep.has_key("method"):
-            method = ep["method"]
-        
-        if method == "select":
-            if ep.has_key("record_format"):
-                if ep["record_format"] == "list":
-                    c = conn.cursor()
+            # a select or an exec?
+            method = "select"
+            if ep.has_key("method"):
+                method = ep["method"]
+            
+            if method == "select":
+                if ep.has_key("record_format"):
+                    if ep["record_format"] == "list":
+                        c = conn.cursor()
+                    else:
+                        c = conn.cursor(pymysql.cursors.DictCursor)
                 else:
                     c = conn.cursor(pymysql.cursors.DictCursor)
+    
+                c.execute(sql)
+                result = c.fetchall()
+            elif method == "exec":
+                c = conn.cursor()
+                c.execute(sql)
+                conn.commit()
+                result = {"result":"true"}
             else:
-                c = conn.cursor(pymysql.cursors.DictCursor)
-
-            c.execute(sql)
-            result = c.fetchall()
-        elif method == "exec":
-            c = conn.cursor()
-            c.execute(sql)
-            conn.commit()
-            result = {"result":"true"}
+                result = {"result":"Invalid SQL method."}
         else:
-            result = {"result":"Invalid SQL method."}
+            result = {"result":"Unable to establish connection to datasource."}
 
         return result
         
     except Exception, ex:
         raise Exception(ex)
     finally:
-        if conn.socket:
+        if conn and conn.socket:
             conn.close()
 
 class BetterEncoder(json.JSONEncoder):

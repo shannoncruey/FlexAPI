@@ -3,7 +3,7 @@
     "type":"sql",
     "method":"select",
     "datasource":"local_mysql",
-    "record_format":"dict",
+    "record_format":"list",
     "return":"format",
     "prefix":"<table border='1'>",
     "suffix":"</table>",
