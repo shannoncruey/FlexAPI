@@ -20,6 +20,7 @@ import os
 import sys
 import json
 import decimal
+import importlib
 
 web_root = os.path.abspath(os.path.dirname(__file__))
 lib_path = os.path.join(web_root, "lib")
@@ -54,6 +55,10 @@ class endpoint:
             
             if ep["type"] == "sql":
                 data = process_sql(ep)
+            elif ep["type"] == "nosql":
+                data = process_nosql(ep)
+            elif ep["type"] == "extension":
+                data = process_extension(ep)
             else:
                 return "Invalid Endpoint Type."
             
@@ -289,6 +294,25 @@ def mysql_exec(ds, ep):
         if conn and conn.socket:
             conn.close()
 
+def process_extension(ep):
+    extmodule = ep["extension"]
+    
+    try:
+        mod = importlib.import_module(extmodule)
+    except ImportError as ex:
+        msg = "Extension module [%s] does not exist." % extmodule
+        raise Exception(msg)
+
+    print mod.__dict__
+    if hasattr(mod, "execute"):
+        method_to_call = getattr(mod, "execute", None)
+        # we pass a pointer to the TaskEngine instance itself, so the command code has access to everything!
+        # also pass in the logger, since it's global and not a TE property
+        return method_to_call(ep, web.input())
+    else:
+        raise Exception("Extension module does not contain an 'execute' function.")
+    
+    
 class BetterEncoder(json.JSONEncoder):
     def default(self, o):
         # decimals

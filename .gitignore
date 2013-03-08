@@ -29,3 +29,5 @@ pip-log.txt
 .project
 
 .pydevproject
+
+extensions/.DS_Store
