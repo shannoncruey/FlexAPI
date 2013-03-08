@@ -1,0 +1,9 @@
+{
+    "name":"json_example",
+    "type":"sql",
+    "method":"select",
+    "datasource":"local_mssql",
+    "record_format":"dict",
+    "return":"json",
+    "code":"SELECT * from users"
+}

@@ -238,9 +238,59 @@ def process_sql(ep):
     result = None
     if ds["provider"] == "mysql":
         result = mysql_exec(ds, ep)
+    if ds["provider"] == "mssql":
+        result = mssql_exec(ds, ep)
                     
     return result
     
+def mssql_exec(ds, ep):
+    try:
+        from pytds import dbapi
+
+        server = ds["server"]
+        port = (int(ds["port"]) if ds["port"] else 1433)
+        uid = ds["uid"]
+        pwd = ds["pwd"]
+        database = ds["database"]
+        sql = ep["code"]  # would do variable replacement first
+        
+        print "(sql server) Executing on [%s\%s]\n%s" % (ds["server"], ds["database"], ep["code"])
+
+        conn = dbapi.connect(server=server, port=port, user=uid, password=pwd, database=database)
+        
+        
+        if conn:
+            # a select or an exec?
+            method = "select"
+            if ep.has_key("method"):
+                method = ep["method"]
+            
+            if method == "select":
+                conn.as_dict = True
+                if ep.has_key("record_format"):
+                    if ep["record_format"] == "list":
+                        conn.as_dict = False
+
+                c.execute(sql)
+                result = c.fetchall()
+                c.close()
+            elif method == "exec":
+                c = conn.cursor()
+                c.execute(sql)
+                conn.commit()
+                result = {"result":"true"}
+                c.close()
+            else:
+                result = {"result":"Invalid SQL method."}
+        else:
+            result = {"result":"Unable to establish connection to datasource."}
+
+        return result
+
+    except Exception as e:
+        msg = "Could not connect to the database. Error message -> %s" % (e)
+        raise Exception(msg)
+
 def mysql_exec(ds, ep):
     try:
         import pymysql
@@ -250,10 +300,9 @@ def mysql_exec(ds, ep):
         uid = ds["uid"]
         pwd = ds["pwd"]
         database = ds["database"]
-        sql = ep["code"] # would do variable replacement first
+        sql = ep["code"]  # would do variable replacement first
         
-        print "Executing on [%s\%s]\n%s" % (ds["server"], ds["database"], ep["code"])
-        conn = None
+        print "(mysql) Executing on [%s\%s]\n%s" % (ds["server"], ds["database"], ep["code"])
         conn = pymysql.connect(host=server, port=int(port),
             user=uid, passwd=pwd, db=database)
 
@@ -303,7 +352,6 @@ def process_extension(ep):
         msg = "Extension module [%s] does not exist." % extmodule
         raise Exception(msg)
 
-    print mod.__dict__
     if hasattr(mod, "execute"):
         method_to_call = getattr(mod, "execute", None)
         # we pass a pointer to the TaskEngine instance itself, so the command code has access to everything!

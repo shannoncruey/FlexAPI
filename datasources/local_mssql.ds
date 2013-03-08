@@ -1,0 +1,8 @@
+{
+    "provider":"mssql",
+    "server":"YOURSERVER",
+    "port":"1433",
+    "uid":"YOURUID",
+    "pwd":"YOURPWD",
+    "database":"YOURDB"
+}
