@@ -1,0 +1,8 @@
+
+.project
+
+.pydevproject
+
+extensions/.DS_Store
+
+*.pyc
