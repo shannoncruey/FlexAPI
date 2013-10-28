@@ -226,7 +226,7 @@ def return_format(data, ep, options):
     return output
 
 def returnerror(msg):
-    return "{\"error\":\"%s\"}" % msg
+    return json.dumps({"error":msg})
             
 def process_sql(ep):
     filename = "%s/datasources/%s.ds" % (web_root, ep["datasource"])
@@ -238,8 +238,10 @@ def process_sql(ep):
     result = None
     if ds["provider"] == "mysql":
         result = mysql_exec(ds, ep)
-    if ds["provider"] == "mssql":
+    elif ds["provider"] == "mssql":
         result = mssql_exec(ds, ep)
+    elif ds["provider"] == "oracle":
+        result = oracle_exec(ds, ep)
                     
     return result
     
@@ -325,6 +327,68 @@ def mysql_exec(ds, ep):
     
                 c.execute(sql)
                 result = c.fetchall()
+            elif method == "exec":
+                c = conn.cursor()
+                c.execute(sql)
+                conn.commit()
+                result = {"result":"true"}
+            else:
+                result = {"result":"Invalid SQL method."}
+        else:
+            result = {"result":"Unable to establish connection to datasource."}
+
+        return result
+        
+    except Exception, ex:
+        raise Exception(ex)
+    finally:
+        if conn and conn.socket:
+            conn.close()
+
+def oracle_exec(ds, ep):
+    try:
+        import cx_Oracle
+
+        server = ds["server"]
+        port = (int(ds["port"]) if ds["port"] else 1521)
+        uid = ds["uid"]
+        pwd = ds["pwd"]
+        database = ds["database"]
+        sql = ep["code"]  # would do variable replacement first
+        
+        print "(oracle) Executing on [%s\%s]\n%s" % (ds["server"], ds["database"], ep["code"])
+        conn_string = "%s/%s@(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=%s)(PORT=%s)))(CONNECT_DATA=(SID=%s)))" % (self.UID,
+            self.PWD, self.Server, p, self.DB)
+
+        tries = 5
+        for ii in range(tries):
+            try:
+                conn = cx_Oracle.connect(conn_string)
+                break
+            except Exception as e:
+                if "ORA-12505" in e and ii < tries:
+                    # oracle listener, sleep and retry
+                    logger.info("Oracle listener not available. Sleeping and retrying...")
+                    # incremental backoff
+                    wait_time = (ii * 5) + 1
+                    time.sleep(wait_time)
+                else:
+                    msg = "Could not connect to the database. Error message -> %s" % (e)
+                    raise ReportError(msg)
+
+        if conn:
+            conn.autocommit = True
+        
+            # a select or an exec?
+            method = "select"
+            if ep.has_key("method"):
+                method = ep["method"]
+            
+            if method == "select":
+                c = conn.cursor()
+                c.execute(sql)
+                results = c.fetchall() if c.description else None
+                c.close()
             elif method == "exec":
                 c = conn.cursor()
                 c.execute(sql)

@@ -28,11 +28,11 @@ DEPENDENCIES:
 * The [web.py](http://webpy.org/) framework.
 * [PyMySql](https://github.com/petehunt/PyMySQL/) for MySql access.
 * [pytds](https://github.com/denisenkom/pytds) for MS SQL Server access.
+* [cx_Oracle](http://cx-oracle.sourceforge.net/) for Oracle access.
 
 TODO:
 ----
 These are items on the short list:
 * A Tutorial
 * Request Authentication
-* Oracle support
 * A single installer that includes all dependencies.
