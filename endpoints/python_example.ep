@@ -1,5 +1,4 @@
 {
-    "name":"test",
     "type":"extension",
     "extension":"examples.helloworld",
     "return":"json"

@@ -1,5 +1,4 @@
 {
-    "name":"test",
     "type":"sql",
     "method":"exec",
     "datasource":"local_mysql",

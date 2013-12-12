@@ -55,7 +55,7 @@ class endpoint:
             
             ep = json.loads(endpoint_json)
             
-            print "Processing endpoint [%s]" % ep["name"]
+            print "Processing endpoint [%s]" % endpoint
             
             data = ""
             options = ep["options"] if ep.has_key("options") else {}
