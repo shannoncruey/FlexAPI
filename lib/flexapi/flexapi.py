@@ -22,19 +22,26 @@ import json
 import decimal
 import importlib
 
-web_root = os.path.abspath(os.path.dirname(__file__))
-lib_path = os.path.join(web_root, "lib")
+base_path = os.path.dirname(os.path.dirname(os.path.abspath(sys.argv[0])))
+lib_path = os.path.join(base_path, "lib")
 sys.path.insert(0, lib_path)
-sys.path.append(web_root)
+extension_path = os.path.join(base_path, "extensions")
+sys.path.append(extension_path)
 
-# to avoid any path issues, "cd" to the web root.
-os.chdir(web_root)
+# to avoid any path issues, "cd" to the base_path.
+os.chdir(base_path)
         
 urls = (
+    '/favicon.ico', 'favicon',
     '/(.*)', 'endpoint'
 )
 app = web.application(urls, globals())
 
+class favicon:
+    # just to avoid errors when testing in a browser
+    def GET(self):
+        return ""
+    
 class endpoint:        
     def GET(self, endpoint):
         try:
@@ -42,7 +49,7 @@ class endpoint:
                 return "Endpoint not defined."
     
             # the endpoint definition is a json file
-            filename = "%s/endpoints/%s.ep" % (web_root, endpoint)
+            filename = os.path.join(base_path, "endpoints", "%s.ep" % endpoint)
             with open(filename, 'r') as f_in:
                 endpoint_json = f_in.read()
             
@@ -229,7 +236,7 @@ def returnerror(msg):
     return json.dumps({"error":msg})
             
 def process_sql(ep):
-    filename = "%s/datasources/%s.ds" % (web_root, ep["datasource"])
+    filename = os.path.join(base_path, "datasources", "%s.ds" % ep["datasource"])
     with open(filename, 'r') as f_in:
         ds_json = f_in.read()
         
@@ -440,7 +447,11 @@ class BetterEncoder(json.JSONEncoder):
         return super(BetterEncoder, self).default(o)
 
 
-if __name__ == "__main__":
+def main():
     # setting this to True shows exceptions to the client.
     web.config.debug = True
+
+    port = "9000"
+    sys.argv.append(port)
+
     app.run()
