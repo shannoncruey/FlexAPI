@@ -1,7 +1,8 @@
 FlexAPI
 =======
 
-FlexAPI is a simple framework that allows you to quickly and easily create a REST API on a relational database.
+FlexAPI is a simple framework that allows you to quickly and easily create a REST API on a relational database, 
+local files, and other data sources.  It allows for fully customized endpoints using Python modules.
 
 DESCRIPTION
 -----------
@@ -19,8 +20,6 @@ FlexAPI could very easily evolve into a content delivery system, but this is *no
 on the Web.py framework, any web
 developer could easily use FlexAPI along with tools such as jQuery to quickly create any type 
 of end user experience.
-
-FlexAPI is currently a very young project, but we hope it will rapidly evolve into the beta phase.
 
 
 DEPENDENCIES:
