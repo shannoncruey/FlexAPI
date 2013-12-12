@@ -1,119 +1,112 @@
 <!doctype html>
 <html>
-	<head>
-		<meta charset="utf-8">
-		<meta http-equiv="X-UA-Compatible" content="chrome=1">
-		<title>FlexAPI by shannoncruey</title>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="chrome=1">
+        <title>FlexAPI by shannoncruey</title>
 
-		<link rel="stylesheet" href="stylesheets/styles.css">
-		<link rel="stylesheet" href="stylesheets/pygment_trac.css">
-		<script src="javascripts/scale.fix.js"></script>
-		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-		<!--[if lt IE 9]>
-		<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-		<![endif]-->
-	</head>
-	<body>
-		<div class="wrapper">
-			<header>
-				<h1 class="header">FlexAPI</h1>
-				<p class="header">
-					FlexAPI
-				</p>
+        <link rel="stylesheet" href="stylesheets/styles.css">
+        <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+        <script src="javascripts/scale.fix.js"></script>
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+        <!--[if lt IE 9]>
+        <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+        <![endif]-->
+    </head>
+    <body>
+        <div class="wrapper">
+            <header>
+                <h1 class="header">FlexAPI</h1>
+                <p class="header">
+                    FlexAPI
+                </p>
 
-				<ul>
-					<li class="download">
-						<a class="buttons" href="https://github.com/shannoncruey/FlexAPI/zipball/master">Download ZIP</a>
-					</li>
-					<li class="download">
-						<a class="buttons" href="https://github.com/shannoncruey/FlexAPI/tarball/master">Download TAR</a>
-					</li>
-					<li>
-						<a class="buttons github" href="https://github.com/shannoncruey/FlexAPI">View On GitHub</a>
-					</li>
-				</ul>
+                <ul>
+                    <li class="download">
+                        <a class="buttons" href="https://github.com/shannoncruey/FlexAPI/zipball/master">Download ZIP</a>
+                    </li>
+                    <li class="download">
+                        <a class="buttons" href="https://github.com/shannoncruey/FlexAPI/tarball/master">Download TAR</a>
+                    </li>
+                    <li>
+                        <a class="buttons github" href="https://github.com/shannoncruey/FlexAPI">View On GitHub</a>
+                    </li>
+                </ul>
 
-				<p class="header">
-					This project is maintained by <a class="header name" href="https://github.com/shannoncruey">shannoncruey</a>
-				</p>
+            </header>
+            <section>
+                <h1>FlexAPI</h1>
 
-			</header>
-			<section>
-				<h1>FlexAPI</h1>
+                <p>
+                    FlexAPI is a simple framework that allows you to quickly and easily create a REST API on a relational database, 
+                    local files, and other data sources.  It allows for fully customized endpoints using Python modules.
+                </p>
 
-				<p>
-					FlexAPI is a simple framework that allows you to quickly and easily create a REST API on a relational database.
-				</p>
+                <h2>DESCRIPTION</h2>
 
-				<h2>DESCRIPTION</h2>
+                <p>
+                    There are thousands of enterprise, custom, proprietary and legacy application out in the world today.  Many of these
+                    applications are performing their purposes quite well, and will not be retired any time soon.  However, as
+                    the world marches forward, Application administrators are increasingly being tasked with creating new and
+                    'modern' ways to interface with these legacy applications.
+                </p>
 
-				<p>
-					There are thousands of enterprise, custom, proprietary and legacy application out in the world today.  Many of these
-					applications are performing their purposes quite well, and will not be retired any time soon.  However, as
-					the world marches forward, Application administrators are increasingly being tasked with creating new and
-					'modern' ways to interface with these legacy applications.
-				</p>
+                <p>
+                    Enter FlexAPI!  Our goal is simple - to provide a robust,
+                    stable and easy to configure REST API that can be easily hooked into an existing application.
+                </p>
 
-				<p>
-					Enter FlexAPI!  Our goal is simple - to provide a robust,
-					stable and easy to configure REST API that can be easily hooked into an existing application.
-				</p>
+                <p>
+                    API "endpoints" are defined in simple configuration files.  Endpoints can access different "datasources", also defined in configuration files.
+                </p>
 
-				<p>
-					API "endpoints" are defined in simple configuration files.  Endpoints can access different "datasources", also defined in configuration files.
-				</p>
+                <p>
+                    FlexAPI could very easily evolve into a content delivery system, but this is <em>not the goal</em>.  However, since FlexAPI is built
+                    on the Web.py framework, any web
+                    developer could easily use FlexAPI along with tools such as jQuery to quickly create any type
+                    of end user experience.
+                </p>
 
-				<p>
-					FlexAPI could very easily evolve into a content delivery system, but this is <em>not the goal</em>.  However, since FlexAPI is built
-					on the Web.py framework, any web
-					developer could easily use FlexAPI along with tools such as jQuery to quickly create any type
-					of end user experience.
-				</p>
+                <h2>DEPENDENCIES:</h2>
 
-				<p>
-					FlexAPI is currently a very young project, but we hope it will rapidly evolve into the beta phase.
-				</p>
+                <ul>
+                    <li>
+                        The <a href="http://webpy.org">web.py</a> framework.
+                    </li>
+                    <li>
+                        <a href="https://github.com/petehunt/PyMySQL">PyMySql</a> for MySql access.
+                    </li>
+                    <li>
+                        <a href="https://github.com/denisenkom/pytds">pytds</a> for MS SQL Server access.
+                    </li>
+                    <li>
+                        <a href="http://cx-oracle.sourceforge.net/">cx_Oracle</a> for Oracle access.
+                    </li>
+                </ul><h2>TODO:</h2>
 
-				<h2>DEPENDENCIES:</h2>
+                <p>
+                    These are items on the short list:
+                </p>
 
-				<ul>
-					<li>
-						The <a href="http://webpy.org">web.py</a> framework.
-					</li>
-					<li>
-						<a href="https://github.com/petehunt/PyMySQL">PyMySql</a> for MySql access.
-					</li>
-					<li>
-						<a href="https://github.com/denisenkom/pytds">pytds</a> for MS SQL Server access.
-					</li>
-				</ul><h2>TODO:</h2>
+                <ul>
+                    <li>
+                        A Tutorial
+                    </li>
+                    <li>
+                        Request Authentication
+                    </li>
+                    <li>
+                        A single installer that includes all dependencies.
+                    </li>
+                </ul>
+            </section>
+            <footer>
+                <p>
+                    <small>Hosted on <a href="https://pages.github.com">GitHub Pages</a> using the Dinky theme</small>
+                </p>
+            </footer>
+        </div>
+        <!--[if !IE]><script>fixScale(document);</script><![endif]-->
 
-				<p>
-					These are items on the short list:
-				</p>
-
-				<ul>
-					<li>
-						A Tutorial
-					</li>
-					<li>
-						Request Authentication
-					</li>
-					<li>
-						Oracle support
-					</li>
-					<li>
-						A single installer that includes all dependencies.
-					</li>
-				</ul>
-			</section>
-			<footer>
-				<p>
-					<small>Hosted on <a href="https://pages.github.com">GitHub Pages</a> using the Dinky theme</small>
-				</p>
-			</footer>
-		</div>
-		<!--[if !IE]><script>fixScale(document);</script><![endif]-->
-
-	</body>
+    </body>
 </html>
