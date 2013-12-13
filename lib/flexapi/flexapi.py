@@ -44,73 +44,69 @@ class favicon:
     
 class endpoint:        
     def GET(self, endpoint):
-        try:
-            if not endpoint: 
-                return "Endpoint not defined."
-    
-            # the endpoint definition is a json file
-            filename = os.path.join(base_path, "endpoints", "%s.ep" % endpoint)
-            with open(filename, 'r') as f_in:
-                endpoint_json = f_in.read()
-            
-            ep = json.loads(endpoint_json)
-            
-            print "Processing endpoint [%s]" % endpoint
-            
-            data = ""
-            options = ep["options"] if ep.has_key("options") else {}
-            
-            if ep["type"] == "sql":
-                data = process_sql(ep)
-            elif ep["type"] == "nosql":
-                data = process_nosql(ep)
-            elif ep["type"] == "extension":
-                data = process_extension(ep)
-            else:
-                return "Invalid Endpoint Type."
-            
-            if ep.has_key("return"):
-                if ep["return"] == "json":
-                    return return_json(data, ep)
-                elif ep["return"] == "format":
-                    """Use row_template and perform python 'format'. on each row."""
-                    return return_format(data, ep, options)
-                elif ep["return"] == "text":
-                    return return_text(data)
-                                
-                elif ep["return"] == "csv":
-                    """This can make use of the csv module, if I can 
-                    figure out how to use it with variables instead of files.
-                    
-                    This was an attempt to do it manually before I discovered the csv module."""
-                    """try:
-                        iterator = iter(data)
-                    except TypeError:
-                        # data is not iterable, just return it
-                        return str(data)
-                    else:
-                        # data is a rowset
-                        for row in data:
-                            # the elements in the row may be a dict, or a tuple
-                            # only a dict will have 'itervalues'
-                            try:
-                                fields = row.itervalues()
-                            except AttributeError:
-                                fields = iter(row)
-    
-                            outlist = []
-                            for field in fields:
-                                outlist.append(field)"""
-    
+        if not endpoint: 
+            return "Endpoint not defined."
+
+        # the endpoint definition is a json file
+        filename = os.path.join(base_path, "endpoints", "%s.ep" % endpoint)
+        with open(filename, 'r') as f_in:
+            endpoint_json = f_in.read()
+        
+        ep = json.loads(endpoint_json)
+        
+        print "Processing endpoint [%s]" % endpoint
+        
+        data = ""
+        options = ep["options"] if ep.has_key("options") else {}
+        
+        if ep["type"] == "sql":
+            data = process_sql(ep)
+        elif ep["type"] == "nosql":
+            data = process_nosql(ep)
+        elif ep["type"] == "extension":
+            data = process_extension(ep)
+        else:
+            return "Invalid Endpoint Type."
+        
+        if ep.has_key("return"):
+            if ep["return"] == "json":
+                return return_json(data, ep)
+            elif ep["return"] == "format":
+                """Use row_template and perform python 'format'. on each row."""
+                return return_format(data, ep, options)
+            elif ep["return"] == "text":
+                return return_text(data)
                             
+            elif ep["return"] == "csv":
+                """This can make use of the csv module, if I can 
+                figure out how to use it with variables instead of files.
+                
+                This was an attempt to do it manually before I discovered the csv module."""
+                """try:
+                    iterator = iter(data)
+                except TypeError:
+                    # data is not iterable, just return it
+                    return str(data)
                 else:
-                    return returnerror("Invalid 'return' format.")
+                    # data is a rowset
+                    for row in data:
+                        # the elements in the row may be a dict, or a tuple
+                        # only a dict will have 'itervalues'
+                        try:
+                            fields = row.itervalues()
+                        except AttributeError:
+                            fields = iter(row)
+
+                        outlist = []
+                        for field in fields:
+                            outlist.append(field)"""
+
+                        
             else:
-                return returnerror("'return' format is required.")
-            
-        except Exception, ex:
-            raise ex
-            return ex.__str__()
+                return returnerror("Invalid 'return' format.")
+        else:
+            return returnerror("'return' format is required.")
+        
             
 def return_json(data, ep):
     # print str(data)
@@ -122,7 +118,7 @@ def return_json(data, ep):
     
     return js
 
-def return_text(data, ep):
+def return_text(data):
     try:
         _ = iter(data)
     except TypeError:

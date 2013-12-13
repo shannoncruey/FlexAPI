@@ -1,0 +1,5 @@
+{
+    "type":"extension",
+    "extension":"examples.get_file",
+    "return":"text"
+}
