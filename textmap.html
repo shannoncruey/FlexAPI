@@ -1,0 +1,63 @@
+<html>
+    <head>
+        <script type='text/javascript' src='https://www.google.com/jsapi'></script>
+        <script type='text/javascript'>
+			google.load('visualization', '1', {
+				'packages' : ['geomap']
+			});
+			google.setOnLoadCallback(drawMap);
+
+			function drawMap() {
+      var data = google.visualization.arrayToDataTable([
+    ['State', 'Incidents'],
+    ['California', 31],
+    ['New York', 13],
+    ['Alabama', 2],
+    ['Arkansas', 1],
+    ['Connecticut', 2],
+    ['Florida', 5],
+    ['Hawaii', 1],
+    ['Idaho', 2],
+    ['Illinois', 6],
+    ['Texas', 8],
+    ['Indiana', 2],
+    ['Kentucky', 3],
+    ['Louisiana', 2],
+    ['Kentucky', 3],
+    ['Maine', 2],
+    ['Massachutsetts', 1],
+    ['Michigan', 1],
+    ['Minnesota', 1],
+    ['Missouri', 1],
+    ['Nevada', 2],
+    ['New Jersey', 2],
+    ['North Carolina', 1],
+    ['Minnesota', 1],
+    ['Ohio', 6],
+    ['Oregon', 2],
+    ['Pennsylvania', 4],
+    ['Rhode Island', 1],
+    ['South Carolina', 2],
+    ['Tennessee', 2],
+    ['Utah', 1],
+    ['Virginia', 5],
+    ['Washington', 7],
+    ['Georgia', 8]
+  ]);   
+				var options = {};
+                options['region'] = 'US';
+                options['showLegend'] = false;
+				options['colors'] = [0xb3f205, 0xe01b1b];
+
+				var container = document.getElementById('map_canvas');
+				var geomap = new google.visualization.GeoMap(container);
+				geomap.draw(data, options);
+			};
+        </script>
+    </head>
+
+    <body>
+        <div id='map_canvas'></div>
+    </body>
+
+</html>
